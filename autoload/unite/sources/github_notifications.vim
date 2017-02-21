@@ -15,7 +15,7 @@ function! unite#sources#github_notifications#open_url(url, comment_url)
     let url = url . '\#issuecomment-' . comment_id
   endif
   if has('win32') || has('win64')
-    execute '!start ' . url
+    execute '!start rundll32.exe url.dll,FileProtocolHandler ' . url
   elseif has('mac')
     call system("open '" . url . "'")
   else
