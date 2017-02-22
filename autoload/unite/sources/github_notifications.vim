@@ -26,13 +26,15 @@ function! unite#sources#github_notifications#open_url(url, comment_url)
   endif
 endfunction
 
-function! s:get_notifications()
+function! s:get_github_notifications()
   let res = webapi#http#get("https://api.github.com/notifications", '', { "Authorization": "token " . g:github_notifications['github_token'] })
   let notifications = json_decode(res.content)
   for notification in notifications
     call add(s:github_notifications, [notification.subject.title, notification.subject.url, notification.subject.latest_comment_url])
   endfor
+endfunction
 
+function! s:get_ghe_notifications()
   let res = webapi#http#get("https://" . g:github_notifications['ghe_domain']. "/api/v3/notifications", '', { "Authorization": "token " . g:github_notifications['ghe_token'] })
   let notifications = json_decode(res.content)
   for notification in notifications
@@ -42,7 +44,7 @@ endfunction
 
 function! s:github_source.gather_candidates(args, context)
   let s:github_notifications = []
-  call s:get_notifications()
+  call s:get_github_notifications()
   return map(copy(s:github_notifications), '{
     \ "word":v:val[0],
     \ "source":"github_notifications",
@@ -53,7 +55,7 @@ endfunction
 
 function! s:ghe_source.gather_candidates(args, context)
   let s:ghe_notifications = []
-  call s:get_notifications()
+  call s:get_ghe_notifications()
   return map(copy(s:ghe_notifications), '{
     \ "word":v:val[0],
     \ "source":"ghe_notifications",
