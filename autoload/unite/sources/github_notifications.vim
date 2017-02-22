@@ -15,10 +15,10 @@ function! unite#sources#github_notifications#open_url(url, comment_url)
   let url_parts = split(a:comment_url, '/')
   let comment_id = url_parts[-1]
   if !empty(comment_id)
-    let url = url . '\#issuecomment-' . comment_id
+    let url = url . '#issuecomment-' . comment_id
   endif
   if has('win32') || has('win64')
-    execute '!start rundll32.exe url.dll,FileProtocolHandler ' . url
+    execute '!start rundll32.exe url.dll,FileProtocolHandler ' . fnameescape(url)
   elseif has('mac')
     call system("open '" . url . "'")
   else
