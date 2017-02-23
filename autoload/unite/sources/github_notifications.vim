@@ -2,14 +2,11 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 let s:github_source = { 'name': 'github_notifications' }
-let s:ghe_source = { 'name': 'ghe_notifications' }
 let s:github_notifications = []
-let s:ghe_notifications = []
 let s:setting_file = expand(get(g:, 'github_notifications_file', '~/.github_notifications'))
 execute 'source' s:setting_file
 
 function! unite#sources#github_notifications#open_url(url, comment_url)
-  let url = substitute(a:url, "/api/v3/repos", "", "")
   let url = substitute(url, "/api.github.com/repos", "/github.com", "")
   let url = substitute(url, "/pulls/", "/pull/", "")
   let url_parts = split(a:comment_url, '/')
@@ -34,14 +31,6 @@ function! s:get_github_notifications()
   endfor
 endfunction
 
-function! s:get_ghe_notifications()
-  let res = webapi#http#get("https://" . g:github_notifications['ghe_domain']. "/api/v3/notifications", '', { "Authorization": "token " . g:github_notifications['ghe_token'] })
-  let notifications = json_decode(res.content)
-  for notification in notifications
-    call add(s:ghe_notifications, [notification.subject.title, notification.subject.url, notification.subject.latest_comment_url])
-  endfor
-endfunction
-
 function! s:github_source.gather_candidates(args, context)
   let s:github_notifications = []
   call s:get_github_notifications()
@@ -53,19 +42,8 @@ function! s:github_source.gather_candidates(args, context)
     \ }')
 endfunction
 
-function! s:ghe_source.gather_candidates(args, context)
-  let s:ghe_notifications = []
-  call s:get_ghe_notifications()
-  return map(copy(s:ghe_notifications), '{
-    \ "word":v:val[0],
-    \ "source":"ghe_notifications",
-    \ "kind":"command",
-    \ "action__command":"call unite#sources#github_notifications#open_url(''".v:val[1]."'', ''".v:val[2]."'')",
-    \ }')
-endfunction
-
 function! unite#sources#github_notifications#define()
-  return [s:github_source, s:ghe_source]
+  return s:github_source
 endfunction
 
 let &cpo = s:save_cpo
