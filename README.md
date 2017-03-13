@@ -9,3 +9,14 @@ let g:github_notifications = {
   \ 'ghe_token':  'Your GHE access token'
 \}
 ```
+
+Source names are as follows.
+
+```
+:Unite github_notifications
+```
+
+```
+:Unite ghe_notifications
+```
+
