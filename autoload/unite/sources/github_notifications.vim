@@ -7,7 +7,7 @@ let s:setting_file = expand(get(g:, 'github_notifications_file', '~/.github_noti
 execute 'source' s:setting_file
 
 function! unite#sources#github_notifications#open_url(url, comment_url)
-  let url = substitute(url, "/api.github.com/repos", "/github.com", "")
+  let url = substitute(a:url, "/api.github.com/repos", "/github.com", "")
   let url = substitute(url, "/pulls/", "/pull/", "")
   let url_parts = split(a:comment_url, '/')
   let comment_id = url_parts[-1]
