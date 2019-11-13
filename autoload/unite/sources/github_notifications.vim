@@ -5,6 +5,8 @@ let s:github_source = { 'name': 'github_notifications' }
 let s:github_notifications = []
 let s:setting_file = expand(get(g:, 'github_notifications_file', '~/.github_notifications'))
 execute 'source' s:setting_file
+let s:wsl = get(g:, 'unite_github_notifications_wsl', 0)
+let s:wsl_open_cmd = get(g:, 'unite_github_notifications_wsl_open_cmd', "/mnt/c/Program\ Files\ \(x86\)/Google/Chrome/Application/chrome.exe")
 
 function! unite#sources#github_notifications#open_url(url, comment_url)
   let url = substitute(a:url, "/api.github.com/repos", "/github.com", "")
@@ -18,6 +20,8 @@ function! unite#sources#github_notifications#open_url(url, comment_url)
     execute '!start rundll32.exe url.dll,FileProtocolHandler ' . fnameescape(url)
   elseif has('mac')
     call system("open '" . url . "'")
+  elseif s:wsl
+    call system("'" . s:wsl_open_cmd . "' '" . url . "'")
   else
     call system("chrome '" . url . "'")
   endif
