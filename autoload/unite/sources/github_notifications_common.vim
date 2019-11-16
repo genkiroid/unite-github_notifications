@@ -23,6 +23,7 @@ function! unite#sources#github_notifications_common#open_url(url, comment_url)
   endif
 endfunction
 
+" Need this function to initialize unite.
 function! unite#sources#github_notifications_common#define()
   return {}
 endfunction
